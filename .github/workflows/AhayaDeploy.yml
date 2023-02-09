@@ -1,0 +1,62 @@
+name: CI_Ahaya
+
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node. js environment
+        uses: actions/setup-node@v3.3.0
+        with:
+          node-version: 16.15.1
+          name: Install dependencies
+          run: yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Create .env file
+        run: |
+          rm -rf .env
+          touch .env
+          echo APP_SECRET=2ba73903ef1e4fbd4bc7f7fac69cc92c >> .env
+          echo APP_API_URL=http://localhost:8888 >> .env
+          echo MAIL_DRIVER=ses >> .env
+          echo ENV=prod >> .env
+          echo CLIENT=Ahaya >> .env
+          echo UPDATE=NO >> .env
+          echo MAINTENCE=NO >> .env
+          echo NOTIFICATION=YES >> .env
+          echo APPVERSION=312 >> .env
+          echo AWS_ACCESS_KEY_ID=AKIAVYAQHTZM7F4PO3NM >> .env
+          echo AWS_SECRET_ACCESS_KEY=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 >> .env
+          echo AWS_DEFAULT_REGION=us-east-1 >> .env
+          echo STORAGE_DRIVER=s3 >> .env
+          cat .env
+      - name: Run build
+        run: yarn build
+
+      - name: Copy dist to Digital Ocean on Ahaya
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_AHAYA }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "."
+          target: "~/app/beach_tennis_backend"
+      - name: Run production scripts
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_AHAYA }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/beach_tennis_backend
+            ./node_modules/.bin/typeorm migration:run
+            pm2 restart bt_api
