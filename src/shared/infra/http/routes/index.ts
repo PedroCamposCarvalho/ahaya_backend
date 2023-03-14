@@ -31,10 +31,12 @@ import experimentalClassesRouter from '@modules/experimental_classes/infra/http/
 import notificationRouter from '@modules/notifications/infra/http/routes/notifications.routes';
 import watchRecordingRouter from '@modules/watchrecording/watchrecording.routes';
 import cancelationRulesRouter from '@modules/cancelation_rules/infra/http/routes/cancelation_rules.routes';
+import scoreRouter from '@modules/score/infra/http/routes/score.routes';
 
 const routes = Router();
 
 routes.use('/users', usersRouter);
+routes.use('/score', scoreRouter);
 routes.use('/dayuse', dayUseRouter);
 routes.use('/sessions', sessionsRouter);
 routes.use('/password', passwordRouter);

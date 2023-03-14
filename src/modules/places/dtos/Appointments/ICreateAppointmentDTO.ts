@@ -27,6 +27,9 @@ export interface IAppointmentProps {
   email: string;
   id_place: string;
   paid: boolean;
+  priceToPay: number;
+  winningPoints: number;
+  points: number;
 }
 
 export default interface ICreateAppointmentDTO {

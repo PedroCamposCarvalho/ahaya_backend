@@ -1,8 +1,8 @@
-import { injectable, inject } from 'tsyringe';
-import path from 'path';
+import { injectable, inject, container } from 'tsyringe';
 import { format } from 'date-fns';
 import IMailProvider from '@shared/container/Providers/MailProvider/models/IMailProvider';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IScoreRepository from '@modules/score/repositories/IScoreRepository';
 import SpecificsNotification from '@modules/places/providers/SpecificsNotification';
 import WhatsAppNotification from '@modules/places/providers/WhatsAppNotification';
 import AppError from '@shared/errors/AppError';
@@ -10,9 +10,10 @@ import Appointment from '../../infra/typeorm/entities/Appointments/Appointment';
 import ICreateAppointmentDTO from '../../dtos/Appointments/ICreateAppointmentDTO';
 import IAppointmentsRepository from '../../repositories/Appointments/IAppointmentsRepository';
 import IPlacesRepository from '../../repositories/Places/IPlacesRepository';
+import InsertAppointmentPointsService from './InsertAppointmentPointsService';
 
 @injectable()
-class CreateAppointmentservice {
+class CreateAppointmentScore {
   constructor(
     @inject('AppointmentsRepository')
     private appointmentsRepository: IAppointmentsRepository,
@@ -22,10 +23,20 @@ class CreateAppointmentservice {
     private usersRepository: IUsersRepository,
     @inject('PlacesRepository')
     private placesRepository: IPlacesRepository,
+    @inject('ScoreRepository')
+    private scoreRepository: IScoreRepository,
   ) {}
 
   public async execute(data: ICreateAppointmentDTO): Promise<Appointment[]> {
     try {
+      const insertAppointmentPointsService = container.resolve(
+        InsertAppointmentPointsService,
+      );
+
+      const { id_user } = data.appointment;
+
+      let pointsInserted = false;
+
       let exitFuncion = false;
 
       const appointmentsToReturn: Appointment[] = [];
@@ -34,7 +45,14 @@ class CreateAppointmentservice {
 
       const { hours, appointment, materials } = data;
 
+      const modules = await this.scoreRepository.findAllModules();
+
       const place = await this.placesRepository.findById(appointment.id_place);
+
+      let userPoints = 0;
+      if (id_user > '') {
+        userPoints = await this.scoreRepository.findUserPoints(id_user);
+      }
 
       const appointmentsInMonth =
         await this.appointmentsRepository.findAllInMonth(
@@ -116,6 +134,19 @@ class CreateAppointmentservice {
             );
           }
 
+          if (!pointsInserted) {
+            await insertAppointmentPointsService.execute({
+              id_user,
+              appointmentFinalPrice: appointment.priceToPay,
+              userPoints,
+              winningPoints: appointment.winningPoints,
+              usingPoints: appointment.points,
+              id_module: modules.filter(i => i.name === 'Reservas Avulsas')[0]
+                .id,
+            });
+            pointsInserted = true;
+          }
+
           appointmentsToReturn.push(newAppointment);
 
           if (materials && materials.length > 0) {
@@ -137,63 +168,7 @@ class CreateAppointmentservice {
         throw new AppError('Appointment already exists');
       }
 
-      if (appointment.finalPrice > 0) {
-        let emailText = 'Horários:<br/>';
-        hours.map(item => {
-          const date = `Data: ${format(
-            new Date(item.start_date),
-            'dd/MM/yyyy',
-          )}`;
-          const emailHours = `De: ${format(
-            new Date(item.start_date),
-            'HH:mm',
-          )} às ${format(new Date(item.finish_date), 'HH:mm')}`;
-
-          emailText += `<br/>${date}<br/>${item.court_name}<br/>${emailHours}<br/>Número de jogadores: ${item.number_of_players}<br/><br/>Materiais:<br/>`;
-
-          if (materials && materials.length > 0) {
-            const hourMaterials = materials.filter(
-              material => material.id_hour === item.id,
-            );
-
-            hourMaterials.map(hourMaterial => {
-              emailText += `${hourMaterial.material} - ${hourMaterial.amount}<br/>`;
-              return null;
-            });
-          }
-
-          emailText += '<br/>';
-          return null;
-        });
-
-        const appointmentCreatedTemplate = path.resolve(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          '..',
-          'emails',
-          'AppointmentCreated',
-          `${process.env.CLIENT}.hbs`,
-        );
-        if (appointment.paid) {
-          await this.mailProvider.sendMail({
-            to: {
-              name: appointment.user_name,
-              email: appointment.email,
-            },
-            subject: 'Reserva concluída com sucesso!',
-            templateData: {
-              file: appointmentCreatedTemplate,
-              variables: {
-                text: emailText,
-              },
-            },
-          });
-        }
-      }
-
-      if (String(process.env.NOTIFICATION) === 'YES') {
+      if (String(process.env.NOTIFICATION) === 'sss') {
         const notificationIds = adminUsers.map(item => item.one_signal_id);
         const start_date = `Início: ${format(
           new Date(hours[0].start_date),
@@ -217,8 +192,10 @@ class CreateAppointmentservice {
       }
       return appointmentsToReturn;
     } catch (error) {
+      console.log(error);
       throw new Error();
     }
   }
 }
-export default CreateAppointmentservice;
+
+export default CreateAppointmentScore;

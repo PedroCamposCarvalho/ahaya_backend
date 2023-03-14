@@ -15,7 +15,7 @@ class UserHistoryScore {
   id_user: string;
 
   @Column()
-  id_module: number;
+  id_module: string;
 
   @Column()
   price: number;

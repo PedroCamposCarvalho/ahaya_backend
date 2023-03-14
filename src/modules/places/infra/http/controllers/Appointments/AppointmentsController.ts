@@ -25,6 +25,7 @@ import CreatePriceExceptionService from '../../../../services/Appointments/Price
 import FindExceptionsByCourtService from '../../../../services/Appointments/Prices/FindExceptionsByCourtService';
 import DeletePriceExceptionService from '../../../../services/Appointments/Prices/DeletePriceExceptionService';
 import EditAppointmentService from '../../../../services/Appointments/EditAppointmentService';
+import CreateAppointmentScore from '../../../../services/Appointments/CreateAppointmentScore';
 
 export default class AppointmentsController {
   public async findWebReport(
@@ -68,6 +69,32 @@ export default class AppointmentsController {
     );
 
     return response.json(appointment);
+  }
+
+  public async createScore(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
+    try {
+      const createAppointmentService = container.resolve(
+        CreateAppointmentScore,
+      );
+
+      const appointments = await createAppointmentService.execute(request.body);
+
+      request.io.emit('newAppointment');
+
+      const ownerSocket =
+        request.connectedUsers[request.body.appointment.id_user];
+
+      if (ownerSocket) {
+        request.io.to(ownerSocket).emit('refresh_dashboard');
+      }
+
+      return response.json(appointments);
+    } catch (error) {
+      throw new Error('');
+    }
   }
 
   public async create(request: Request, response: Response): Promise<Response> {

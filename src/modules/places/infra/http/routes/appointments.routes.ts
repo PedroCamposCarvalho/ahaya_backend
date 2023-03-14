@@ -13,6 +13,12 @@ appointmentsRouter.post(
   appointmentsController.create,
 );
 
+appointmentsRouter.post(
+  '/createScore',
+  ensureAtuthenticated,
+  appointmentsController.createScore,
+);
+
 appointmentsRouter.get(
   '/findByID',
   ensureAtuthenticated,

@@ -6,31 +6,16 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('score_rules')
-class ScoreRule {
+@Entity('user_used_history_score')
+class UserUsedHistoryScore {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  id_module: string;
-
-  @Column()
-  price: number;
+  id_user: string;
 
   @Column()
   points: number;
-
-  @Column()
-  each_point_worth: number;
-
-  @Column()
-  description: string;
-
-  @Column()
-  discount: boolean;
-
-  @Column()
-  image: string;
 
   @CreateDateColumn()
   created_at: Date;
@@ -39,4 +24,4 @@ class ScoreRule {
   updated_at: Date;
 }
 
-export default ScoreRule;
+export default UserUsedHistoryScore;

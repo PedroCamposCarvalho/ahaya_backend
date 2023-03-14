@@ -82,6 +82,14 @@ import ExperimentalClassRepository from '@modules/experimental_classes/infra/typ
 import ICancelationRulesRepository from '@modules/cancelation_rules/repositories/ICancelationRulesRepository';
 import CancelationRulesRepository from '@modules/cancelation_rules/infra/typeorm/repositories/CancelationRulesRepository';
 
+import IScoreRepository from '@modules/score/repositories/IScoreRepository';
+import ScoreRepository from '@modules/score/infra/typeorm/repositories/ScoreRepository';
+
+container.registerSingleton<IScoreRepository>(
+  'ScoreRepository',
+  ScoreRepository,
+);
+
 container.registerSingleton<ICancelationRulesRepository>(
   'CancelationRulesRepository',
   CancelationRulesRepository,

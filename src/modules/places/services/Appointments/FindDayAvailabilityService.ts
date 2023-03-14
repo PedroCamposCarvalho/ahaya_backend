@@ -58,11 +58,22 @@ class FindDayAvailabilityService {
     return available;
   }
 
- // private isVacations(day: number, month: number): boolean {
-   // if (String(process.env.CLIENT) === 'Ahaya') {
-    //  if (month === 11 || month === 0) {
-   private isVacations(day: number, month: number): boolean {
+  // private isVacations(day: number, month: number): boolean {
+  // if (String(process.env.CLIENT) === 'Ahaya') {
+  //  if (month === 11 || month === 0) {
+  private isVacations(
+    weekDay: number,
+    day: number,
+    month: number,
+    hour: number,
+  ): boolean {
     if (String(process.env.CLIENT) === 'Ahaya') {
+      if (weekDay === 0) {
+        return true;
+      }
+      if (weekDay === 6 && hour >= 18) {
+        return true;
+      }
       if (month === 11) {
         if (day >= 24) {
           return true;
@@ -130,8 +141,10 @@ class FindDayAvailabilityService {
               isAfter(selectedDate.setHours(hour), currentDate) &&
               this.verifyAppointmentExistInHour(appointments, hour, court.id) &&
               !this.isVacations(
+                selectedDate.getDay(),
                 selectedDate.getDate(),
                 selectedDate.getMonth(),
+                hour,
               ) &&
               monthly.filter(
                 item =>

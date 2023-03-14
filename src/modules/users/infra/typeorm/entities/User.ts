@@ -88,6 +88,9 @@ class User {
   birth_date?: Date;
 
   @Column()
+  points: number;
+
+  @Column()
   gender: string;
 
   @Expose({ name: 'avatar_url' })
