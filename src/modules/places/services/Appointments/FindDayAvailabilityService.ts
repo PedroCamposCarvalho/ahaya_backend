@@ -68,6 +68,9 @@ class FindDayAvailabilityService {
     hour: number,
   ): boolean {
     if (String(process.env.CLIENT) === 'Ahaya') {
+      if (day === 7 && month === 3) {
+        return true;
+      }
       if (weekDay === 0) {
         return true;
       }
