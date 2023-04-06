@@ -20,7 +20,7 @@ class SchedulePixPaymentService {
         differenceInMinutes(new Date(), addHours(item.created_at, hoursToAdd)) >
         30
       ) {
-        // await this.appointmentsRepository.deleteAppointment(item.id);
+        await this.appointmentsRepository.deleteAppointment(item.id);
       } else {
         axios
           .get(

@@ -109,7 +109,9 @@ class Appointments implements IAppointmentsRepository {
       throw new AppError('Reserva não encontrada');
     }
 
-    await this.ormRepository.remove(appointment);
+    appointment.canceled = true;
+
+    await this.ormRepository.save(appointment);
 
     return true;
   }
