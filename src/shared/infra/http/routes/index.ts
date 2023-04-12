@@ -81,4 +81,9 @@ routes.get('/files/:name', function (req: Request, res: Response) {
   res.sendFile(fileName, options);
 });
 
+routes.get('/vindi_webhook', function (req: Request, res: Response) {
+  console.log('recebi uma chamada');
+  res.json({ ok: true });
+});
+
 export default routes;
