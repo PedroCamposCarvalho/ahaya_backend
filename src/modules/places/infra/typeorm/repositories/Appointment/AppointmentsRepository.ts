@@ -111,7 +111,7 @@ class Appointments implements IAppointmentsRepository {
 
     appointment.canceled = true;
 
-    await this.ormRepository.save(appointment);
+    await this.ormRepository.remove(appointment);
 
     return true;
   }
@@ -493,6 +493,16 @@ class Appointments implements IAppointmentsRepository {
 
     const priceExceptions = await query.execute();
     return priceExceptions;
+  }
+
+  public async findByIdTransaction(
+    id_transaction: string,
+  ): Promise<Appointment | undefined> {
+    const appointment = await this.ormRepository.findOne({
+      where: { id_transaction },
+    });
+
+    return appointment;
   }
 }
 export default Appointments;

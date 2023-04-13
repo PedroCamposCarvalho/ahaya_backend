@@ -81,4 +81,5 @@ export default interface IAppointmentsRepository {
   // mensalista
   findMonthlyAppointments(id_appointment: string): Promise<Appointment[]>;
   editAppointment(data: IEditAppointmentDTO): Promise<Appointment>;
+  findByIdTransaction(id_transaction: string): Promise<Appointment | undefined>;
 }

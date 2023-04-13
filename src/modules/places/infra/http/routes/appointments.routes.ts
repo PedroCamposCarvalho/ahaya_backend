@@ -8,6 +8,11 @@ const appointmentsRouter = Router();
 const appointmentsController = new AppointmentsController();
 
 appointmentsRouter.post(
+  '/vindi_webhook',
+  appointmentsController.vindiWebHookPaid,
+);
+
+appointmentsRouter.post(
   '/create',
   ensureAtuthenticated,
   appointmentsController.create,

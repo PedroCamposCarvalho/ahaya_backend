@@ -26,8 +26,27 @@ import FindExceptionsByCourtService from '../../../../services/Appointments/Pric
 import DeletePriceExceptionService from '../../../../services/Appointments/Prices/DeletePriceExceptionService';
 import EditAppointmentService from '../../../../services/Appointments/EditAppointmentService';
 import CreateAppointmentScore from '../../../../services/Appointments/CreateAppointmentScore';
+import UpdatePixPaymentPaidService from '../../../../services/Appointments/UpdatePixPaymentPaidService';
 
 export default class AppointmentsController {
+  public async vindiWebHookPaid(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
+    const udatePixPaymentPaidService = container.resolve(
+      UpdatePixPaymentPaidService,
+    );
+    const { event } = request.body;
+
+    if (String(event.type) === 'bill_paid') {
+      const appointment = await udatePixPaymentPaidService.execute(
+        String(event.data.bill.id),
+      );
+      return response.json(appointment);
+    }
+    return response.json({ error: 'Appointment not found' });
+  }
+
   public async findWebReport(
     request: Request,
     response: Response,
