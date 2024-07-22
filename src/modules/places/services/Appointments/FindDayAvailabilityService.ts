@@ -56,24 +56,20 @@ class FindDayAvailabilityService {
     return available;
   }
 
-  private isVacations(
-    weekDay: number,
-    day: numberi,
-    month: number,
-    hour: number,
-  ): boolean {
+  private isVacations(weekDay: number, day: number, month: number): boolean {
     if (String(process.env.CLIENT) === 'Ahaya') {
-	
-if(weekDay === 0){
-		return true;
-	}
-
-
-      if ((month === 11 && day >= 23 && day <= 31) || (month === 0 && day >= 1 && day <= 3)) {
+      if (weekDay === 0) {
         return true;
       }
-      if (month === 10 && day <= 26){
-	      return true;
+
+      if (
+        (month === 11 && day >= 23 && day <= 31) ||
+        (month === 0 && day >= 1 && day <= 3)
+      ) {
+        return true;
+      }
+      if (month === 10 && day <= 26) {
+        return true;
       }
       return false;
     }
@@ -93,18 +89,16 @@ if(weekDay === 0){
       ).filter(item => item.id_place === id_place);
       const monthly = await this.monthlyRepository.findAll();
 
-      const missedDays = await this.monthlyUserMissedDaysRepositoryRepository.findAllByDate(
-        day,
-        month,
-        year,
-      );
+      const missedDays =
+        await this.monthlyUserMissedDaysRepositoryRepository.findAllByDate(
+          day,
+          month,
+          year,
+        );
 
       const currentDate = new Date();
       const selectedDate = new Date(year, month - 1, day);
       const hours = getWorkingHours(selectedDate.getDay());
-      const exceptionDays = await this.appointmentsRepository.findExceptionsByWeekDay(
-        selectedDate.getDay(),
-      );
 
       const availableHours: IReturnAvailableHoursDTO[] = [];
 
@@ -112,6 +106,7 @@ if(weekDay === 0){
         const newItemProps: ICourts[] = courts.map(court => ({
           id: court.id,
           court_name: court.name,
+          court_photo: court.photo,
           available:
             isAfter(selectedDate.setHours(hour), currentDate) &&
             this.verifyAppointmentExistInHour(appointments, hour, court.id) &&
@@ -119,7 +114,6 @@ if(weekDay === 0){
               selectedDate.getDay(),
               selectedDate.getDate(),
               selectedDate.getMonth(),
-              hour,
             ) &&
             monthly.filter(
               item =>
@@ -137,9 +131,8 @@ if(weekDay === 0){
                   item.hour === hour &&
                   item.week_day === selectedDate.getDay() &&
                   item.id_court === court.id,
-              )?.price
-            ) ||
-            0,
+              )?.price,
+            ) || 0,
         }));
         const newItem: IReturnAvailableHoursDTO = {
           hour,
@@ -157,4 +150,3 @@ if(weekDay === 0){
 }
 
 export default FindDayAvailabilityService;
-

@@ -182,28 +182,6 @@ container.registerSingleton<INotificationRepository>(
   NotificationsRepository,
 );
 
-container.registerSingleton<IEventsRepository>(
-  'EventsRepository',
-  EventsRepository,
-);
-
-container.registerSingleton<IStoreRepository>(
-  'StoreRepository',
-  StoreRepository,
-);
-
-container.registerSingleton<ITeacherRepository>(
-  'TeacherRepository',
-  TeacherRepository,
-);
-
-container.registerSingleton<IInterestsRepository>(
-  'InterestRepository',
-  InterestRepository,
-);
-
-container.registerSingleton<IClubRepository>('ClubRepository', ClubRepository);
-
 container.registerSingleton<IPayersRepository>(
   'PayersRepository',
   PayersRepository,
@@ -212,9 +190,4 @@ container.registerSingleton<IPayersRepository>(
 container.registerSingleton<IMonthlyRepository>(
   'MonthlyRepository',
   MonthlyRepository,
-);
-
-container.registerSingleton<ITournamentsRepository>(
-  'TournamentsRepository',
-  TournamentsRepository,
 );

@@ -94,7 +94,7 @@ class CourtsRepository implements ICourtsRepository {
 
   public async findCourtsBySportId(id_sport: string): Promise<Court[]> {
     const sports = await this.ormRepository.query(
-      `select cou.id, cou.id_place, cou.name from courts cou inner join court_sport cosp on cou.id = cosp.court_id where cosp.sport_id = '${id_sport}'`,
+      `select cou.id, cou.id_place, cou.photo,cou.name from courts cou inner join court_sport cosp on cou.id = cosp.court_id where cosp.sport_id = '${id_sport}'`,
     );
     return sports;
   }

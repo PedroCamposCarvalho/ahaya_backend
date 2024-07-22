@@ -36,9 +36,9 @@ class Court {
   photo: string;
 
   @Expose({ name: 'photo_url' })
-  getLogo_url(): string | null {
+  getLogo_url(): string {
     if (!this.photo) {
-      return null;
+      return '';
     }
 
     switch (uploadConfig.driver) {
@@ -47,7 +47,7 @@ class Court {
       case 's3':
         return `https://${uploadConfig.config.aws.bucket}.s3.amazonaws.com/${this.photo}`;
       default:
-        return null;
+        return '';
     }
   }
 }
