@@ -21,7 +21,7 @@ const prodConfig = [
   {
     type: 'postgres',
     host: 'localhost',
-    port: String(process.env.CLIENT) === 'Jardins' ? 45432 : 35432,
+    port:  35432,
     username: 'postgres',
     password: 'd7ae6bbfa000ab3e01cf70f5a757effe',
     database: process.env.CLIENT,
@@ -36,4 +36,4 @@ const prodConfig = [
   },
 ];
 
-module.exports = process.env.ENV === 'dev' ? devConfig : devConfig;
+module.exports = process.env.ENV === 'dev' ? devConfig : prodConfig;
