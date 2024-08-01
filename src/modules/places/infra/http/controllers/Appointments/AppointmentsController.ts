@@ -50,6 +50,7 @@ export default class AppointmentsController {
     const findCalendarEventsService = container.resolve(
       FindCalendarEventsService,
     );
+
     const { id_place } = request.query;
     const events = await findCalendarEventsService.execute(String(id_place));
     return response.json(events);

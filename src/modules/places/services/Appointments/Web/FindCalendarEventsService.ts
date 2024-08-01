@@ -1,10 +1,6 @@
 import { injectable, inject } from 'tsyringe';
 import { addHours, addDays } from 'date-fns';
-import ITeacherRepository from '@modules/teachers/repositories/ITeacherRepository';
 import IMonthlyRepository from '@modules/monthly/repositories/IMonthlyRepository';
-import IReturnCalendarEvents, {
-  IClassUsersDTO,
-} from '../../../dtos/Appointments/IReturnCalendarDTO';
 import IGetCourtsDTO from '../../../dtos/Courts/IGetCourtsDTO';
 import IAppointmentsRepository from '../../../repositories/Appointments/IAppointmentsRepository';
 import ICourtsRepository from '../../../repositories/Courts/ICourtsRepository';
@@ -15,8 +11,6 @@ class FindByTransactionIdService {
   constructor(
     @inject('AppointmentsRepository')
     private appointmentsRepository: IAppointmentsRepository,
-    @inject('TeacherRepository')
-    private teachersRepository: ITeacherRepository,
     @inject('MonthlyRepository')
     private monthlyRepository: IMonthlyRepository,
     @inject('CourtsRepository')
@@ -54,10 +48,6 @@ class FindByTransactionIdService {
   public async execute(id_place: string): Promise<IReturnCalendarEvents[]> {
     try {
       const appointments = await this.appointmentsRepository.findAll();
-
-      const classes = await this.teachersRepository.findAllWeekClasses();
-
-      const classesUsers = await this.teachersRepository.findAllClassesUsers();
 
       const monthly = await this.monthlyRepository.findAll();
 
@@ -109,23 +99,23 @@ class FindByTransactionIdService {
         return null;
       });
 
-      classes.map(item => {
-        const userClasses: IClassUsersDTO[] = classesUsers.filter(
-          item2 => item2.id_week === item.id_week,
-        );
-        const newEvent: IReturnCalendarEvents = {
-          id: item.id_week,
-          id_court: item.id_court,
-          title: `${item.teacher_name} - Aula`,
-          start: this.formatDate(new Date(item.start_date)),
-          end: this.formatDate(new Date(addHours(item.start_date, 1))),
-          color: getCourtColor(this.getCourtIndex(courts, item.id_court)),
-          type: 2,
-          classUsers: userClasses,
-        };
-        events.push(newEvent);
-        return null;
-      });
+      // classes.map(item => {
+      //   const userClasses: IClassUsersDTO[] = classesUsers.filter(
+      //     item2 => item2.id_week === item.id_week,
+      //   );
+      //   const newEvent: IReturnCalendarEvents = {
+      //     id: item.id_week,
+      //     id_court: item.id_court,
+      //     title: `${item.teacher_name} - Aula`,
+      //     start: this.formatDate(new Date(item.start_date)),
+      //     end: this.formatDate(new Date(addHours(item.start_date, 1))),
+      //     color: getCourtColor(this.getCourtIndex(courts, item.id_court)),
+      //     type: 2,
+      //     classUsers: userClasses,
+      //   };
+      //   events.push(newEvent);
+      //   return null;
+      // });
 
       return events;
     } catch (error) {
