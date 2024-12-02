@@ -205,13 +205,12 @@ class CreateAppointmentservice {
         )}`;
         const title = `Nova Reserva - ${appointment.user_name} - ${place.name}`;
         const notificationMessage = `${hours[0].court_name}\n${start_date}\n${finish_date}`;
-        SpecificsNotification(notificationIds, title, notificationMessage);
+        // SpecificsNotification(notificationIds, title, notificationMessage);
 
-        adminUsers.map(item => {
-          WhatsAppNotification(
-            item.cellphone,
-            `${title}\n${notificationMessage}`,
-          );
+        const cellphones = ['(47)98842-5573', '(47)99197-8092'];
+
+        cellphones.map(item => {
+          WhatsAppNotification(item, `${title}\n${notificationMessage}`);
           return null;
         });
       }
