@@ -61,17 +61,6 @@ class FindDayAvailabilityService {
       if (weekDay === 0) {
         return true;
       }
-
-      if (
-        (month === 11 && day >= 23 && day <= 31) ||
-        (month === 0 && day >= 1 && day <= 3)
-      ) {
-        return true;
-      }
-      if (month === 10 && day <= 26) {
-        return true;
-      }
-      return false;
     }
     return false;
   }

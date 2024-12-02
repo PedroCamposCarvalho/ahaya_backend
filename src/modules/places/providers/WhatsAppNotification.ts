@@ -16,7 +16,7 @@ export default async function WhatsAppNotification(
 
   const data = {
     apikey: process.env.WHATSAPP_API,
-    phone_number: '5511939281781',
+    phone_number: '5547992759520',
     contact_phone_number: formattedNumber,
     message_custom_id: '',
     message_type: 'text',
