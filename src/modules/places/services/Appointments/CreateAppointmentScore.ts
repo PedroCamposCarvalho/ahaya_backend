@@ -29,7 +29,7 @@ class CreateAppointmentScore {
 
   public async execute(data: ICreateAppointmentDTO): Promise<Appointment[]> {
     try {
-	console.log("tao me chamando")
+      console.log('tao me chamando');
       const insertAppointmentPointsService = container.resolve(
         InsertAppointmentPointsService,
       );
@@ -181,13 +181,12 @@ class CreateAppointmentScore {
         )}`;
         const title = `Nova Reserva - ${appointment.user_name} - ${place.name}`;
         const notificationMessage = `${hours[0].court_name}\n${start_date}\n${finish_date}`;
-       // SpecificsNotification(notificationIds, title, notificationMessage);
+        // SpecificsNotification(notificationIds, title, notificationMessage);
 
-        adminUsers.map(item => {
-          WhatsAppNotification(
-            item.cellphone,
-            `${title}\n${notificationMessage}`,
-          );
+        const cellphones = ['(47)98842-5573', '(47)99197-8092'];
+
+        cellphones.map(item => {
+          WhatsAppNotification(item, `${title}\n${notificationMessage}`);
           return null;
         });
       }

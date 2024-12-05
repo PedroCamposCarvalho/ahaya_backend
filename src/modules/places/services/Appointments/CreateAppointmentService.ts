@@ -194,7 +194,6 @@ class CreateAppointmentservice {
       }
 
       if (String(process.env.NOTIFICATION) === 'YES') {
-        const notificationIds = adminUsers.map(item => item.one_signal_id);
         const start_date = `Início: ${format(
           new Date(hours[0].start_date),
           'dd/MM/yyyy HH:mm',

@@ -212,7 +212,7 @@ export default class DayUseController {
       };
 
       await createNotificationService.execute(data);
-      await WhatsAppNotification(user.cellphone, `${title}\n${text}`);
+      // await WhatsAppNotification(user.cellphone, `${title}\n${text}`);
 
       return null;
     });
