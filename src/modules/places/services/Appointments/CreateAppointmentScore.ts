@@ -29,7 +29,6 @@ class CreateAppointmentScore {
 
   public async execute(data: ICreateAppointmentDTO): Promise<Appointment[]> {
     try {
-      console.log('tao me chamando');
       const insertAppointmentPointsService = container.resolve(
         InsertAppointmentPointsService,
       );
